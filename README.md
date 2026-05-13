@@ -1,5 +1,7 @@
 # tap — Webhook Inspector & Replay Tool
 
+<img width="800" height="450" alt="ezgif-875e29e5015887a6" src="https://github.com/user-attachments/assets/4cc31fa7-ffe9-444f-ac00-c2fd209ffac0" />
+
 A developer tool for receiving, inspecting, and replaying webhook payloads. Works with Stripe, Shopify, GitHub, or any third-party webhook sender.
 
 ## Quick Start
