@@ -37,7 +37,7 @@ export default function PayloadDetail({ payload, onReplay, onExport }: Props) {
         <div className="flex gap-2">
           <button
             onClick={onReplay}
-            className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+            className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
           >
             Replay
           </button>

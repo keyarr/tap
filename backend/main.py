@@ -1,5 +1,5 @@
 """
-Webhook Inspector & Replay Tool — FastAPI backend.
+tap — Webhook Inspector & Replay Tool (FastAPI backend).
 """
 import asyncio
 import hashlib
@@ -57,7 +57,7 @@ async def lifespan(app: FastAPI):
 # App
 # ---------------------------------------------------------------------------
 
-app = FastAPI(title="Webhook Inspector", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="tap", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -570,7 +570,7 @@ async def replay_payload(payload_id: int, request: Request):
 
 @app.get("/")
 async def root():
-    return {"service": "Webhook Inspector", "version": "1.0.0", "status": "ok"}
+    return {"service": "tap", "version": "1.0.0", "status": "ok"}
 
 
 # ---------------------------------------------------------------------------

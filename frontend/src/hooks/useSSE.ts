@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Payload {
   id: number;
@@ -16,6 +16,7 @@ interface Payload {
 export function useSSE(onPayload: (p: Payload) => void) {
   const cbRef = useRef(onPayload);
   cbRef.current = onPayload;
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     const evtSource = new EventSource("/stream");
@@ -29,10 +30,11 @@ export function useSSE(onPayload: (p: Payload) => void) {
       }
     });
 
-    evtSource.onerror = () => {
-      // Reconnect handled by EventSource automatically
-    };
+    evtSource.onopen = () => setConnected(true);
+    evtSource.onerror = () => setConnected(false);
 
     return () => evtSource.close();
   }, []);
+
+  return connected;
 }

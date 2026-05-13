@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Payload, PaginatedResponse } from "./types";
 import { useSSE } from "./hooks/useSSE";
 import ThemeToggle from "./components/ThemeToggle";
@@ -49,10 +49,10 @@ export default function App() {
   // SSE: receive new payloads in real time
   const handleNewPayload = useCallback((p: Payload) => {
     setRecentPayloads((prev) => [p, ...prev].slice(0, 50));
-    setAllPayloads((prev) => [p, ...prev]);
+    setAllPayloads((prev) => [p, ...prev].slice(0, 500));
   }, []);
 
-  useSSE(handleNewPayload);
+  const sseConnected = useSSE(handleNewPayload);
 
   // Fetch paginated history
   const fetchHistory = useCallback(async () => {
@@ -105,20 +105,24 @@ export default function App() {
     }
   };
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts — refs avoid re-registering listener on every render
+  const shortcutsRef = useRef({ tab, recentPayloads, allPayloads, selectedPayload, replayPayload });
+  shortcutsRef.current = { tab, recentPayloads, allPayloads, selectedPayload, replayPayload };
+  const handleExportRef = useRef(handleExport);
+  handleExportRef.current = handleExport;
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // Ignore when typing in inputs
+      const s = shortcutsRef.current;
       const tag = (e.target as HTMLElement).tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      // Ignore when modal is open
-      if (replayPayload) return;
+      if (s.replayPayload) return;
 
-      const list = tab === "live" ? recentPayloads : allPayloads;
+      const list = s.tab === "live" ? s.recentPayloads : s.allPayloads;
       if (list.length === 0) return;
 
-      const currentIdx = selectedPayload
-        ? list.findIndex((p) => p.id === selectedPayload.id)
+      const currentIdx = s.selectedPayload
+        ? list.findIndex((p) => p.id === s.selectedPayload!.id)
         : -1;
 
       switch (e.key) {
@@ -137,16 +141,16 @@ export default function App() {
           break;
         }
         case "r": {
-          if (selectedPayload) {
+          if (s.selectedPayload) {
             e.preventDefault();
-            setReplayPayload(selectedPayload);
+            setReplayPayload(s.selectedPayload);
           }
           break;
         }
         case "e": {
-          if (selectedPayload) {
+          if (s.selectedPayload) {
             e.preventDefault();
-            handleExport();
+            handleExportRef.current();
           }
           break;
         }
@@ -154,7 +158,7 @@ export default function App() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  });
+  }, []);
 
   return (
     <div className="h-screen flex flex-col">
@@ -162,14 +166,14 @@ export default function App() {
       <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex-shrink-0">
         <div className="flex items-center gap-3">
           <h1 className="text-lg font-bold tracking-tight">
-            <span className="text-blue-600 dark:text-blue-400">Webhook</span> Inspector
+            tap
           </h1>
           <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5">
             <button
               onClick={() => setTab("live")}
               className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
                 tab === "live"
-                  ? "bg-white dark:bg-gray-700"
+                  ? "bg-white dark:bg-gray-700 dark:text-gray-100 shadow-sm ring-1 ring-gray-200 dark:ring-gray-600"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 }`}
               >
@@ -179,7 +183,7 @@ export default function App() {
                 onClick={() => setTab("history")}
                 className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
                   tab === "history"
-                    ? "bg-white dark:bg-gray-700"
+                    ? "bg-white dark:bg-gray-700 dark:text-gray-100 shadow-sm ring-1 ring-gray-200 dark:ring-gray-600"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               }`}
             >
@@ -193,7 +197,8 @@ export default function App() {
               Creating endpoint...
             </code>
           ) : hookUrl && (
-            <code className="hidden sm:block text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded font-mono">
+            <code className="hidden sm:inline-flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded font-mono">
+              <span className={`w-2 h-2 rounded-full ${sseConnected ? "bg-green-500" : "bg-red-400"}`} />
               {hookUrl}
             </code>
           )}

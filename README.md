@@ -1,4 +1,4 @@
-# Webhook Inspector & Replay Tool
+# tap — Webhook Inspector & Replay Tool
 
 A developer tool for receiving, inspecting, and replaying webhook payloads. Works with Stripe, Shopify, GitHub, or any third-party webhook sender.
 

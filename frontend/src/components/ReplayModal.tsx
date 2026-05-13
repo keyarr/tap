@@ -93,7 +93,7 @@ export default function ReplayModal({ payload, onClose }: Props) {
       >
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Replay Webhook #{payload.id}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xl">&times;</button>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-lg leading-none">&times;</button>
         </div>
 
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 font-mono">
@@ -155,7 +155,7 @@ export default function ReplayModal({ payload, onClose }: Props) {
             <button
               onClick={sendReplay}
               disabled={loading || !targetUrl}
-              className="flex-1 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+               className="flex-1 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
               {loading ? "Sending..." : "Send Replay Request"}
             </button>

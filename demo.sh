@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Webhook Inspector Demo Script
+# tap — Demo Script
 # Sends 3 sample webhook payloads for testing
 # Usage: bash demo.sh [hook_uuid] [base_url]
 
@@ -104,7 +104,7 @@ curl -s -X POST "$ENDPOINT" \
     "commits": [
       {
         "id": "abc123def456",
-        "message": "Add webhook inspector feature",
+        "message": "Add tap webhook inspector feature",
         "timestamp": "2026-05-10T11:00:00Z",
         "author": {
           "name": "Developer",
@@ -118,5 +118,5 @@ echo
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  Done! 3 payloads sent to $ENDPOINT"
-echo "  Check the Webhook Inspector UI (http://localhost:5173)"
+echo "  Check the tap UI (http://localhost:5173)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
